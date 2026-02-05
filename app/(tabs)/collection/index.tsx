@@ -56,7 +56,7 @@ export default function CollectionScreen() {
   const handlePress = useCallback((recipe: Recipe) => {
     useRecipeStore.getState().clearCurrentRecipe()
     useRecipeStore.setState({ currentRecipe: recipe })
-    router.push('/result')
+    router.push('/(tabs)/collection/result')
   }, [])
 
   const renderItem = useCallback(({ item }: { item: Recipe }) => (

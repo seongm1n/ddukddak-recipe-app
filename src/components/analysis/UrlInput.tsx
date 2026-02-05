@@ -6,21 +6,24 @@ interface UrlInputProps {
   value: string
   onChangeText: (text: string) => void
   isValid: boolean
-  error?: string
 }
 
 function getStatusIcon(value: string, isValid: boolean) {
   if (value.length === 0) {
-    return null
+    return <Ionicons name="link" size={20} color="#D1D5DB" />
   }
 
   if (isValid) {
-    return (
-      <Ionicons name="checkmark-circle" size={22} color="#10B981" />
-    )
+    return <Ionicons name="checkmark-circle" size={20} color="#10B981" />
   }
 
-  return <Ionicons name="close-circle" size={22} color="#EF4444" />
+  return <Ionicons name="alert-circle" size={20} color="#EF4444" />
+}
+
+function getBorderColor(value: string, isValid: boolean) {
+  if (value.length === 0) return 'border-gray-200'
+  if (isValid) return 'border-green-400'
+  return 'border-red-400'
 }
 
 export function UrlInput({
@@ -29,17 +32,11 @@ export function UrlInput({
   isValid,
 }: UrlInputProps) {
   return (
-    <View className="flex-row items-center rounded-lg border border-gray-200 bg-white px-3 py-2">
-      <Ionicons
-        name="logo-youtube"
-        size={22}
-        color="#FF0000"
-        style={{ marginRight: 8 }}
-      />
+    <View className={`flex-row items-center rounded-xl border-2 bg-gray-50 px-4 py-3.5 ${getBorderColor(value, isValid)}`}>
       <TextInput
         value={value}
         onChangeText={onChangeText}
-        placeholder="YouTube 요리 영상 URL을 입력하세요"
+        placeholder="https://youtube.com/watch?v=..."
         placeholderTextColor="#9CA3AF"
         autoCapitalize="none"
         autoCorrect={false}

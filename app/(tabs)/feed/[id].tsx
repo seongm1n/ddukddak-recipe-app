@@ -1,13 +1,11 @@
 import React, { useEffect, useState, useCallback } from 'react'
 import { View, ScrollView, Alert } from 'react-native'
 import { useLocalSearchParams, Stack } from 'expo-router'
-import { Image } from 'expo-image'
 
-import { SafeAreaWrapper } from '@/components/ui/SafeAreaWrapper'
 import { LoadingSpinner } from '@/components/ui/LoadingSpinner'
 import { Button } from '@/components/ui/Button'
 import { Card } from '@/components/ui/Card'
-import { Body, Caption } from '@/components/ui/Typography'
+import { Body } from '@/components/ui/Typography'
 import { VideoHeader } from '@/components/result/VideoHeader'
 import { RecipeSteps } from '@/components/result/RecipeSteps'
 import { IngredientList } from '@/components/result/IngredientList'
@@ -54,67 +52,39 @@ export default function FeedDetailScreen() {
 
   if (isLoading) {
     return (
-      <SafeAreaWrapper variant="secondary">
+      <View className="flex-1 bg-background-secondary">
         <LoadingSpinner message="레시피 로딩 중..." />
-      </SafeAreaWrapper>
+      </View>
     )
   }
 
   if (!feedItem) {
     return (
-      <SafeAreaWrapper variant="secondary">
-        <View className="flex-1 items-center justify-center">
-          <Body>레시피를 찾을 수 없습니다.</Body>
-        </View>
-      </SafeAreaWrapper>
+      <View className="flex-1 items-center justify-center bg-background-secondary">
+        <Body>레시피를 찾을 수 없습니다.</Body>
+      </View>
     )
   }
 
-  const { recipe, author } = feedItem
+  const { recipe } = feedItem
 
   return (
     <>
-      <Stack.Screen options={{ title: recipe.title }} />
-      <SafeAreaWrapper variant="secondary">
-        <ScrollView className="flex-1" showsVerticalScrollIndicator={false}>
+      <Stack.Screen options={{ title: recipe.title, headerBackTitle: ' ', headerBackTitleVisible: false }} />
+      <ScrollView className="flex-1 bg-background-secondary" showsVerticalScrollIndicator={false}>
           <View className="px-4 py-4">
-            <Card className="mb-4 p-0">
-              <View className="flex-row items-center p-4">
-                {author.avatarUrl ? (
-                  <Image
-                    source={{ uri: author.avatarUrl }}
-                    contentFit="cover"
-                    className="mr-3 h-10 w-10 rounded-full"
-                  />
-                ) : (
-                  <View className="mr-3 h-10 w-10 items-center justify-center rounded-full bg-primary/20">
-                    <Body className="font-bold text-primary">
-                      {author.name.charAt(0)}
-                    </Body>
-                  </View>
-                )}
-                <View>
-                  <Body className="font-semibold">{author.name}</Body>
-                  <Caption>{author.email}</Caption>
-                </View>
-              </View>
-            </Card>
-
             <VideoHeader
               title={recipe.title}
               thumbnailUrl={recipe.thumbnailUrl}
               channelName={recipe.channelName}
+              videoUrl={recipe.videoUrl}
             />
 
             <View className="mt-4">
-              <Card className="p-0">
-                <View className="p-4">
-                  <CostSummary
-                    totalCost={recipe.totalCost}
-                    servings={recipe.servings}
-                  />
-                </View>
-              </Card>
+              <CostSummary
+                totalCost={recipe.totalCost}
+                servings={recipe.servings}
+              />
             </View>
 
             <View className="mt-4">
@@ -138,7 +108,6 @@ export default function FeedDetailScreen() {
             </View>
           </View>
         </ScrollView>
-      </SafeAreaWrapper>
     </>
   )
 }

@@ -91,6 +91,20 @@ export const useRecipeStore = create<RecipeState & RecipeActions>(
           analysisSteps: serverSteps.length > 0 ? serverSteps : allComplete,
           isAnalyzing: false,
         })
+
+        // 분석 완료된 레시피를 자동으로 컬렉션에 저장
+        try {
+          const saveResponse = await recipeService.save(recipe)
+          if (saveResponse.success && saveResponse.data) {
+            const { savedRecipes } = get()
+            const isAlreadySaved = savedRecipes.some((r) => r.id === recipe.id)
+            if (!isAlreadySaved) {
+              set({ savedRecipes: [...savedRecipes, saveResponse.data] })
+            }
+          }
+        } catch {
+          // 자동 저장 실패는 무시 (사용자가 수동으로 저장 가능)
+        }
       } catch {
         set({
           error: '레시피 분석 중 오류가 발생했습니다',

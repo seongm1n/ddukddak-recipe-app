@@ -17,7 +17,7 @@ export default function LoadingScreen() {
 
   useEffect(() => {
     if (!isAnalyzing && currentRecipe) {
-      router.replace('/result')
+      router.replace('/(tabs)/collection/result')
     }
   }, [isAnalyzing, currentRecipe])
 

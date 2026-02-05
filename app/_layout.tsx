@@ -52,11 +52,10 @@ export default function RootLayout() {
           <Stack.Screen name="(tabs)" />
           <Stack.Screen
             name="loading"
-            options={{ headerShown: false, gestureEnabled: false }}
-          />
-          <Stack.Screen
-            name="result"
-            options={{ headerShown: true, title: '분석 결과' }}
+            options={{
+              headerShown: false,
+              gestureEnabled: false,
+            }}
           />
         </Stack>
       </AuthGuard>

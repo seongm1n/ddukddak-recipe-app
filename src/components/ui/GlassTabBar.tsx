@@ -36,6 +36,24 @@ export function GlassTabBar({ state, navigation }: BottomTabBarProps) {
     (route) => TAB_ICONS[route.name] !== undefined
   )
 
+  // 현재 탭의 네비게이션 상태 확인 - 상세 화면이면 탭바 숨김
+  const currentRoute = state.routes[state.index]
+  const nestedState = currentRoute?.state
+  const nestedIndex = nestedState?.index ?? 0
+  const nestedRoutes = nestedState?.routes as { name: string }[] | undefined
+
+  // 현재 보고 있는 화면 이름 확인
+  const currentNestedRoute = nestedRoutes?.[nestedIndex]
+  const currentScreenName = currentNestedRoute?.name
+
+  // 탭바를 숨길 화면들
+  const hideTabBarScreens = ['result', '[id]', 'terms', 'privacy']
+  const shouldHideTabBar = currentScreenName && hideTabBarScreens.includes(currentScreenName)
+
+  if (shouldHideTabBar) {
+    return null
+  }
+
   return (
     <View
       style={[

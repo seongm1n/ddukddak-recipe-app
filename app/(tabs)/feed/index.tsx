@@ -32,7 +32,10 @@ export default function FeedScreen() {
   }, [])
 
   const renderItem = useCallback(({ item }: { item: FeedItem }) => (
-    <FeedCard item={item} onPress={() => handlePress(item)} />
+    <FeedCard
+      item={item}
+      onPress={() => handlePress(item)}
+    />
   ), [handlePress])
 
   return (

@@ -22,7 +22,7 @@ const cardShadow = Platform.select({
 })
 
 export function FeedCard({ item, onPress }: FeedCardProps) {
-  const { recipe, author, likes } = item
+  const { recipe, likes } = item
   const scaleAnim = useRef(new Animated.Value(1)).current
 
   const handlePressIn = () => {
@@ -56,7 +56,7 @@ export function FeedCard({ item, onPress }: FeedCardProps) {
             source={{ uri: recipe.thumbnailUrl }}
             contentFit="cover"
             transition={200}
-            className="h-full w-full"
+            style={{ width: '100%', height: '100%' }}
             placeholder={{ blurhash: 'LKO2?U%2Tw=w]~RBVZRi};RPxuwH' }}
           />
           <LinearGradient
@@ -80,27 +80,15 @@ export function FeedCard({ item, onPress }: FeedCardProps) {
             {recipe.title}
           </Text>
           <View className="mt-2.5 flex-row items-center justify-between">
-            <View className="flex-row items-center gap-2">
-              {author.avatarUrl ? (
-                <Image
-                  source={{ uri: author.avatarUrl }}
-                  contentFit="cover"
-                  className="h-6 w-6 rounded-full"
-                />
-              ) : (
-                <View className="h-6 w-6 items-center justify-center rounded-full bg-gray-300">
-                  <Ionicons name="person" size={14} color="#6B7280" />
-                </View>
-              )}
-              <Text className="text-sm text-gray-500">
-                {author.name}
+            <View className="flex-1 flex-row items-center gap-1.5">
+              <Ionicons name="at" size={16} color="#6B7280" />
+              <Text className="text-sm text-gray-500" numberOfLines={1}>
+                {recipe.channelName}
               </Text>
             </View>
             <View className="flex-row items-center gap-1">
-              <Ionicons name="heart" size={16} color="#EF4444" />
-              <Text className="text-sm text-gray-500">
-                {likes}
-              </Text>
+              <Ionicons name="bookmark" size={16} color="#9CA3AF" />
+              <Text className="text-sm text-gray-400">{likes}</Text>
             </View>
           </View>
         </View>
