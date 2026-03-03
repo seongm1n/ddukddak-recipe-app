@@ -3,8 +3,14 @@ export interface User {
   readonly email: string
   readonly name: string
   readonly avatarUrl?: string
-  readonly provider: 'apple' | 'google'
+  readonly provider: 'apple' | 'google' | 'kakao'
   readonly createdAt: string
+}
+
+export interface Author {
+  readonly id: string
+  readonly name: string
+  readonly avatarUrl?: string
 }
 
 export interface Ingredient {
@@ -26,13 +32,12 @@ export interface Recipe {
   readonly ingredients: readonly Ingredient[]
   readonly totalCost: number
   readonly servings: number
+  readonly analyzedBy?: string
   readonly savedAt?: string
-  readonly userId?: string
 }
 
 export interface RecipeAnalysisResult {
   readonly recipe: Recipe
-  readonly analysisSteps: readonly AnalysisStep[]
 }
 
 export interface AnalysisStep {
@@ -43,7 +48,7 @@ export interface AnalysisStep {
 export interface FeedItem {
   readonly id: string
   readonly recipe: Recipe
-  readonly author: User
+  readonly author?: Author
   readonly likes: number
   readonly createdAt: string
 }

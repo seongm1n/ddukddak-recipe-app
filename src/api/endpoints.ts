@@ -4,6 +4,7 @@ export const ENDPOINTS = {
     LOGOUT: '/auth/logout',
     REFRESH: '/auth/refresh',
     ME: '/auth/me',
+    DELETE_ACCOUNT: '/auth/me',
   },
   RECIPE: {
     ANALYZE: '/recipe/analyze',

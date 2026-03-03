@@ -47,7 +47,7 @@ export function GlassTabBar({ state, navigation }: BottomTabBarProps) {
   const currentScreenName = currentNestedRoute?.name
 
   // 탭바를 숨길 화면들
-  const hideTabBarScreens = ['result', '[id]', 'terms', 'privacy']
+  const hideTabBarScreens = ['result', '[id]', 'terms', 'privacy', 'analyze']
   const shouldHideTabBar = currentScreenName && hideTabBarScreens.includes(currentScreenName)
 
   if (shouldHideTabBar) {

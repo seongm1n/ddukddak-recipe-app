@@ -1,15 +1,19 @@
 import React from 'react'
-import { View, ScrollView, Text, TouchableOpacity, Platform, Linking } from 'react-native'
+import { View, ScrollView, Text, TouchableOpacity, Platform, Linking, Alert } from 'react-native'
 import { LinearGradient } from 'expo-linear-gradient'
 import { useSafeAreaInsets } from 'react-native-safe-area-context'
 import { Ionicons } from '@expo/vector-icons'
 import { router } from 'expo-router'
+
+import Constants from 'expo-constants'
 
 import { ProfileHeader } from '@/components/mypage/ProfileHeader'
 import { useAuth } from '@/hooks/useAuth'
 import { useRecipeStore } from '@/store/recipeStore'
 import { gradients } from '@/constants/theme'
 import { haptics } from '@/utils/haptics'
+
+const APP_VERSION = Constants.expoConfig?.version ?? '1.0.0'
 
 interface MenuItemProps {
   readonly icon: keyof typeof Ionicons.glyphMap
@@ -43,17 +47,34 @@ function MenuItem({ icon, label, onPress, showChevron = true, danger = false }: 
 
 export default function MyPageScreen() {
   const insets = useSafeAreaInsets()
-  const { user, logout, isLoading } = useAuth()
+  const { user, logout, deleteAccount, isLoading } = useAuth()
   const savedRecipes = useRecipeStore((state) => state.savedRecipes)
 
-  const handleFeedback = () => {
+  const handleFeedback = async () => {
     haptics.light()
-    Linking.openURL('mailto:support@ddukddak.app?subject=뚝딱레시피 피드백')
+    const url = 'mailto:support@ddukddak.app?subject=뚝딱레시피 피드백'
+    const canOpen = await Linking.canOpenURL(url)
+    if (canOpen) {
+      await Linking.openURL(url)
+    } else {
+      Alert.alert('메일 앱 없음', 'support@ddukddak.app으로 피드백을 보내주세요.')
+    }
   }
 
-  const handleRating = () => {
+  const handleRating = async () => {
     haptics.light()
-    // App Store 링크로 변경 예정
+    // TODO: 스토어 등록 후 실제 ID로 교체
+    const url = Platform.select({
+      ios: 'itms-apps://apps.apple.com/app/id6743129337?action=write-review',
+      android: 'market://details?id=com.ddukddak.recipe',
+    })
+    if (!url) return
+    const canOpen = await Linking.canOpenURL(url)
+    if (canOpen) {
+      await Linking.openURL(url)
+    } else {
+      Alert.alert('준비 중', '앱 평가 기능은 스토어 출시 후 이용 가능합니다.')
+    }
   }
 
   const handleTerms = () => {
@@ -69,6 +90,40 @@ export default function MyPageScreen() {
   const handleLogout = () => {
     haptics.light()
     logout()
+  }
+
+  const handleDeleteAccount = () => {
+    haptics.light()
+    Alert.alert(
+      '회원 탈퇴',
+      '정말 탈퇴하시겠습니까?\n저장된 레시피와 계정 정보가 모두 삭제됩니다.',
+      [
+        { text: '취소', style: 'cancel' },
+        {
+          text: '탈퇴하기',
+          style: 'destructive',
+          onPress: () => {
+            Alert.alert(
+              '마지막 확인',
+              '이 작업은 되돌릴 수 없습니다. 정말 탈퇴하시겠습니까?',
+              [
+                { text: '취소', style: 'cancel' },
+                {
+                  text: '탈퇴 확인',
+                  style: 'destructive',
+                  onPress: async () => {
+                    const success = await deleteAccount()
+                    if (!success) {
+                      Alert.alert('오류', '회원 탈퇴에 실패했습니다. 다시 시도해주세요.')
+                    }
+                  },
+                },
+              ],
+            )
+          },
+        },
+      ],
+    )
   }
 
   return (
@@ -101,13 +156,13 @@ export default function MyPageScreen() {
           >
             <View className="flex-1 items-center border-r border-gray-100">
               <Text className="text-2xl font-bold text-primary">{savedRecipes.length}</Text>
-              <Text className="mt-1 text-xs text-gray-500">저장된 레시피</Text>
+              <Text className="mt-1 text-xs text-gray-500">모아둔 레시피</Text>
             </View>
             <View className="flex-1 items-center">
               <Text className="text-2xl font-bold text-primary">
-                {savedRecipes.reduce((sum, r) => sum + r.ingredients.length, 0)}
+                {savedRecipes.filter((r) => r.analyzedBy === user?.id).length}
               </Text>
-              <Text className="mt-1 text-xs text-gray-500">분석된 재료</Text>
+              <Text className="mt-1 text-xs text-gray-500">뚝딱한 레시피</Text>
             </View>
           </View>
         </View>
@@ -168,7 +223,7 @@ export default function MyPageScreen() {
           </View>
         </View>
 
-        {/* 로그아웃 */}
+        {/* 로그아웃 / 회원 탈퇴 */}
         <View className="mt-4 px-4">
           <View
             className="rounded-2xl bg-white px-4"
@@ -189,12 +244,20 @@ export default function MyPageScreen() {
               showChevron={false}
               danger
             />
+            <View className="h-px bg-gray-100" />
+            <MenuItem
+              icon="trash-outline"
+              label="회원 탈퇴"
+              onPress={handleDeleteAccount}
+              showChevron={false}
+              danger
+            />
           </View>
         </View>
 
         {/* 버전 정보 */}
         <View className="mt-8 items-center pb-8">
-          <Text className="text-xs text-gray-400">뚝딱레시피 v1.0.0</Text>
+          <Text className="text-xs text-gray-400">뚝딱레시피 v{APP_VERSION}</Text>
         </View>
       </ScrollView>
     </View>

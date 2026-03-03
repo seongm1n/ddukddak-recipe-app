@@ -103,6 +103,7 @@ export const MOCK_RECIPES: readonly Recipe[] = [
     ingredients: kimchiJjigaeIngredients,
     totalCost: calculateTotalCost(kimchiJjigaeIngredients),
     servings: 2,
+    analyzedBy: 'user-001',
   },
   {
     id: 'recipe-002',
@@ -121,6 +122,7 @@ export const MOCK_RECIPES: readonly Recipe[] = [
     ingredients: tteokbokkiIngredients,
     totalCost: calculateTotalCost(tteokbokkiIngredients),
     servings: 2,
+    analyzedBy: 'user-002',
   },
   {
     id: 'recipe-003',
@@ -139,6 +141,7 @@ export const MOCK_RECIPES: readonly Recipe[] = [
     ingredients: gimbapIngredients,
     totalCost: calculateTotalCost(gimbapIngredients),
     servings: 3,
+    analyzedBy: 'user-003',
   },
   {
     id: 'recipe-004',
@@ -157,6 +160,7 @@ export const MOCK_RECIPES: readonly Recipe[] = [
     ingredients: japchaeIngredients,
     totalCost: calculateTotalCost(japchaeIngredients),
     servings: 4,
+    analyzedBy: 'user-004',
   },
 ]
 

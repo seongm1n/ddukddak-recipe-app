@@ -1,6 +1,7 @@
 import { create } from 'zustand'
 
 import { authService, storageService } from '@/api/services'
+import { getSocialToken } from '@/auth/socialAuthProvider'
 import type { User, AuthTokens } from '@/types'
 
 interface AuthState {
@@ -12,8 +13,9 @@ interface AuthState {
 }
 
 interface AuthActions {
-  login: (provider: 'apple' | 'google') => Promise<void>
+  login: (provider: 'apple' | 'google' | 'kakao') => Promise<void>
   logout: () => Promise<void>
+  deleteAccount: () => Promise<boolean>
   checkAuth: () => Promise<void>
   setTokens: (tokens: AuthTokens) => void
   clearError: () => void
@@ -33,7 +35,9 @@ export const useAuthStore = create<AuthState & AuthActions>((set) => ({
   login: async (provider) => {
     set({ isLoading: true, error: null })
     try {
-      const response = await authService.login(provider)
+      const { token } = await getSocialToken(provider)
+
+      const response = await authService.login(provider, token)
 
       if (response.success && response.data) {
         const { user, tokens } = response.data
@@ -53,9 +57,11 @@ export const useAuthStore = create<AuthState & AuthActions>((set) => ({
           isLoading: false,
         })
       }
-    } catch {
+    } catch (error) {
+      const message =
+        error instanceof Error ? error.message : '로그인 중 오류가 발생했습니다'
       set({
-        error: '로그인 중 오류가 발생했습니다',
+        error: message,
         isLoading: false,
       })
     }
@@ -71,6 +77,31 @@ export const useAuthStore = create<AuthState & AuthActions>((set) => ({
       // Proceed with local logout even if server logout fails
     } finally {
       set({ ...initialState })
+    }
+  },
+
+  deleteAccount: async () => {
+    set({ isLoading: true, error: null })
+    try {
+      const response = await authService.deleteAccount()
+
+      if (!response.success) {
+        set({
+          error: response.error || '회원 탈퇴에 실패했습니다',
+          isLoading: false,
+        })
+        return false
+      }
+
+      await storageService.removeToken()
+      await storageService.removeRefreshToken()
+      set({ ...initialState })
+      return true
+    } catch (error) {
+      const message =
+        error instanceof Error ? error.message : '회원 탈퇴 중 오류가 발생했습니다'
+      set({ error: message, isLoading: false })
+      return false
     }
   },
 

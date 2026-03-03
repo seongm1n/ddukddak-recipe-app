@@ -14,7 +14,8 @@ export class MockAuthService implements AuthService {
   private readonly storageService = new MockStorageService()
 
   async login(
-    _provider: 'apple' | 'google',
+    _provider: 'apple' | 'google' | 'kakao',
+    _token: string,
   ): Promise<ApiResponse<{ user: User; tokens: AuthTokens }>> {
     await delay(500)
 
@@ -70,5 +71,14 @@ export class MockAuthService implements AuthService {
       success: true,
       data: tokens,
     }
+  }
+
+  async deleteAccount(): Promise<ApiResponse<void>> {
+    await delay(500)
+
+    await this.storageService.removeToken()
+    await this.storageService.removeRefreshToken()
+
+    return { success: true }
   }
 }

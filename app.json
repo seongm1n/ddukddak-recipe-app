@@ -15,7 +15,23 @@
     },
     "ios": {
       "supportsTablet": true,
-      "bundleIdentifier": "com.ddukddak.recipe"
+      "bundleIdentifier": "com.ddukddak.recipe",
+      "usesAppleSignIn": true,
+      "infoPlist": {
+        "CFBundleURLTypes": [
+          {
+            "CFBundleURLSchemes": [
+              "kakaob50e7fb58751e581782a4377c3c3cd80"
+            ]
+          }
+        ],
+        "LSApplicationQueriesSchemes": [
+          "kakaokompassauth",
+          "kakaolink",
+          "kakaotalk"
+        ],
+        "KAKAO_APP_KEY": "b50e7fb58751e581782a4377c3c3cd80"
+      }
     },
     "android": {
       "adaptiveIcon": {
@@ -32,7 +48,20 @@
     "plugins": [
       "expo-router",
       "expo-secure-store",
-      "expo-web-browser"
+      "expo-web-browser",
+      "expo-apple-authentication",
+      [
+        "@react-native-google-signin/google-signin",
+        {
+          "iosUrlScheme": "com.googleusercontent.apps.949982075736-p4uvu1chku7be0t5k90k3annrue3a2j8"
+        }
+      ],
+      [
+        "@react-native-seoul/kakao-login",
+        {
+          "kakaoAppKey": "b50e7fb58751e581782a4377c3c3cd80"
+        }
+      ]
     ]
   }
 }

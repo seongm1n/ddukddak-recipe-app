@@ -33,7 +33,7 @@ const TERMS_CONTENT = `
 서비스 이용과 관련한 분쟁은 대한민국 법률에 따라 해결합니다.
 
 부칙
-이 약관은 2025년 1월 1일부터 시행합니다.
+이 약관은 2026년 3월 1일부터 시행합니다.
 `.trim()
 
 export default function TermsScreen() {

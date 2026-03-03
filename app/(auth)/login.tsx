@@ -1,22 +1,22 @@
 import React from 'react'
-import { View, Text } from 'react-native'
+import { View, Text, Platform } from 'react-native'
 import { router } from 'expo-router'
 import { StatusBar } from 'expo-status-bar'
 import { SafeAreaView } from 'react-native-safe-area-context'
 import { Ionicons } from '@expo/vector-icons'
 import { LinearGradient } from 'expo-linear-gradient'
 
-import { H1, Body } from '@/components/ui/Typography'
 import { SocialLoginButton } from '@/components/auth/SocialLoginButton'
 import { useAuth } from '@/hooks/useAuth'
 import { gradients } from '@/constants/theme'
 
 export default function LoginScreen() {
-  const { login, isLoading } = useAuth()
+  const { login, isLoading, error, clearError } = useAuth()
 
-  const handleLogin = async (provider: 'apple' | 'google') => {
+  const handleLogin = async (provider: 'apple' | 'google' | 'kakao') => {
+    clearError()
     await login(provider)
-    router.replace('/(tabs)')
+    // AuthGuard가 isAuthenticated 변경 감지 후 자동으로 /(tabs)로 이동
   }
 
   return (
@@ -37,10 +37,23 @@ export default function LoginScreen() {
             </Text>
           </View>
 
+          {error && (
+            <View style={{ marginBottom: 16, padding: 12, borderRadius: 12, backgroundColor: 'rgba(239,68,68,0.2)' }}>
+              <Text style={{ color: '#FFFFFF', textAlign: 'center', fontSize: 14 }}>{error}</Text>
+            </View>
+          )}
+
           <View style={{ gap: 16 }}>
+            {Platform.OS === 'ios' && (
+              <SocialLoginButton
+                provider="apple"
+                onPress={() => handleLogin('apple')}
+                isLoading={isLoading}
+              />
+            )}
             <SocialLoginButton
-              provider="apple"
-              onPress={() => handleLogin('apple')}
+              provider="kakao"
+              onPress={() => handleLogin('kakao')}
               isLoading={isLoading}
             />
             <SocialLoginButton

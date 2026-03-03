@@ -7,8 +7,9 @@ export function useAuth() {
   const error = useAuthStore((state) => state.error)
   const login = useAuthStore((state) => state.login)
   const logout = useAuthStore((state) => state.logout)
+  const deleteAccount = useAuthStore((state) => state.deleteAccount)
   const checkAuth = useAuthStore((state) => state.checkAuth)
   const clearError = useAuthStore((state) => state.clearError)
 
-  return { user, isAuthenticated, isLoading, error, login, logout, checkAuth, clearError }
+  return { user, isAuthenticated, isLoading, error, login, logout, deleteAccount, checkAuth, clearError }
 }

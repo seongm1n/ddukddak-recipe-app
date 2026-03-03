@@ -9,6 +9,7 @@ import { AppLogo } from '@/components/ui/AppLogo'
 import { EmptyState } from '@/components/ui/EmptyState'
 import { RecipeCard } from '@/components/collection/RecipeCard'
 import { useRecipeStore } from '@/store/recipeStore'
+import { useAuth } from '@/hooks/useAuth'
 import { gradients } from '@/constants/theme'
 import { haptics } from '@/utils/haptics'
 import type { Recipe } from '@/types'
@@ -25,6 +26,7 @@ const fabShadow = Platform.select({
 
 export default function CollectionScreen() {
   const insets = useSafeAreaInsets()
+  const { user } = useAuth()
   const savedRecipes = useRecipeStore((state) => state.savedRecipes)
   const loadSavedRecipes = useRecipeStore((state) => state.loadSavedRecipes)
   const deleteRecipe = useRecipeStore((state) => state.deleteRecipe)
@@ -64,8 +66,9 @@ export default function CollectionScreen() {
       recipe={item}
       onPress={() => handlePress(item)}
       onLongPress={() => handleDelete(item)}
+      isMine={item.analyzedBy === user?.id}
     />
-  ), [handlePress, handleDelete])
+  ), [handlePress, handleDelete, user?.id])
 
   if (savedRecipes.length === 0) {
     return (

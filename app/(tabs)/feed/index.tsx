@@ -10,11 +10,13 @@ import { EmptyState } from '@/components/ui/EmptyState'
 import { FeedCard } from '@/components/feed/FeedCard'
 import { SortToggle } from '@/components/feed/SortToggle'
 import { useFeedStore } from '@/store/feedStore'
+import { useAuth } from '@/hooks/useAuth'
 import { gradients } from '@/constants/theme'
 import type { FeedItem } from '@/types'
 
 export default function FeedScreen() {
   const insets = useSafeAreaInsets()
+  const { user } = useAuth()
   const feedItems = useFeedStore((state) => state.feedItems)
   const sortBy = useFeedStore((state) => state.sortBy)
   const isLoading = useFeedStore((state) => state.isLoading)
@@ -35,8 +37,9 @@ export default function FeedScreen() {
     <FeedCard
       item={item}
       onPress={() => handlePress(item)}
+      isMine={item.author?.id === user?.id}
     />
-  ), [handlePress])
+  ), [handlePress, user?.id])
 
   return (
     <View className="flex-1 bg-background-secondary">
@@ -54,9 +57,6 @@ export default function FeedScreen() {
           </View>
         </View>
       </LinearGradient>
-      <View className="px-4 pb-2 pt-3">
-        <SortToggle sortBy={sortBy} onChange={changeSortOrder} />
-      </View>
       {isLoading && feedItems.length === 0 ? (
         <LoadingSpinner message="피드 로딩 중..." />
       ) : feedItems.length === 0 ? (
@@ -70,6 +70,9 @@ export default function FeedScreen() {
           data={[...feedItems]}
           keyExtractor={(item) => item.id}
           renderItem={renderItem}
+          ListHeaderComponent={
+            <SortToggle sortBy={sortBy} onChange={changeSortOrder} />
+          }
           contentContainerStyle={{ padding: 16, gap: 16, paddingBottom: 100 }}
           showsVerticalScrollIndicator={false}
           onEndReached={loadMore}

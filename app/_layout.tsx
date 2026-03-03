@@ -24,6 +24,14 @@ function AuthGuard({ children }: { children: React.ReactNode }) {
   }, [navigationRef])
 
   useEffect(() => {
+    import('@/auth/providers/google')
+      .then(({ configureGoogleSignIn }) => configureGoogleSignIn())
+      .catch(() => {
+        // 네이티브 모듈 없는 환경에서는 무시
+      })
+  }, [])
+
+  useEffect(() => {
     checkAuth()
   }, [checkAuth])
 

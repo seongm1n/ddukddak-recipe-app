@@ -51,14 +51,14 @@ export class MockRecipeService implements RecipeService {
       success: true,
       data: {
         recipe: selectedRecipe,
-        analysisSteps: allComplete,
       },
     }
   }
 
-  async save(recipe: Recipe): Promise<ApiResponse<Recipe>> {
+  async save(recipeId: string): Promise<ApiResponse<Recipe>> {
     await delay(300)
 
+    const recipe = MOCK_RECIPES.find((r) => r.id === recipeId) ?? MOCK_RECIPES[0]
     const savedRecipe: Recipe = {
       ...recipe,
       savedAt: new Date().toISOString(),

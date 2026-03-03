@@ -37,7 +37,7 @@ export default function ResultScreen() {
   const handleSave = useCallback(async () => {
     if (!currentRecipe) return
     try {
-      await saveRecipe(currentRecipe)
+      await saveRecipe(currentRecipe.id)
       haptics.success()
       Alert.alert('저장 완료', '레시피가 컬렉션에 저장되었습니다.', [
         { text: '확인', onPress: () => {

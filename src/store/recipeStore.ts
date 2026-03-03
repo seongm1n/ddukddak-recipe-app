@@ -13,7 +13,7 @@ interface RecipeState {
 
 interface RecipeActions {
   analyzeUrl: (url: string) => Promise<void>
-  saveRecipe: (recipe: Recipe) => Promise<void>
+  saveRecipe: (recipeId: string) => Promise<void>
   deleteRecipe: (id: string) => Promise<void>
   loadSavedRecipes: () => Promise<void>
   clearCurrentRecipe: () => void
@@ -58,43 +58,57 @@ export const useRecipeStore = create<RecipeState & RecipeActions>(
         currentRecipe: null,
       })
 
-      try {
-        // Step 1: Fetching video info
-        set({ analysisSteps: updateStepStatus(steps, 0, 'in_progress') })
+      // 클라이언트 사이드 진행률 시뮬레이션
+      // 백엔드는 단일 응답이므로, 대기 중 단계별 전환을 보여줌
+      const stepTimers: ReturnType<typeof setTimeout>[] = []
+      let currentStep = 0
 
+      const advanceStep = (index: number) => {
+        if (index >= steps.length) return
+        currentStep = index
+        const updated = steps.map((step, i) => {
+          if (i < index) return { ...step, status: 'completed' as const }
+          if (i === index) return { ...step, status: 'in_progress' as const }
+          return { ...step, status: 'pending' as const }
+        })
+        set({ analysisSteps: updated })
+      }
+
+      advanceStep(0)
+      stepTimers.push(setTimeout(() => advanceStep(1), 5000))
+      stepTimers.push(setTimeout(() => advanceStep(2), 15000))
+
+      try {
         const response = await recipeService.analyze(url)
+
+        stepTimers.forEach(clearTimeout)
 
         if (!response.success || !response.data) {
           set({
             error: response.error || '레시피 분석에 실패했습니다',
             isAnalyzing: false,
-            analysisSteps: updateStepStatus(steps, 0, 'completed'),
+            analysisSteps: steps.map((step) => ({
+              ...step,
+              status: 'completed' as const,
+            })),
           })
           return
         }
 
-        const { recipe, analysisSteps: serverSteps } = response.data
-
-        // Step 1 complete, Step 2 in progress
-        const afterStep1 = updateStepStatus(steps, 0, 'completed')
-        set({ analysisSteps: updateStepStatus(afterStep1, 1, 'in_progress') })
-
-        // Step 2 complete, Step 3 in progress
-        const afterStep2 = updateStepStatus(afterStep1, 1, 'completed')
-        set({ analysisSteps: updateStepStatus(afterStep2, 2, 'in_progress') })
-
-        // All steps complete
-        const allComplete = updateStepStatus(afterStep2, 2, 'completed')
+        const { recipe } = response.data
 
         set({
           currentRecipe: recipe,
-          analysisSteps: serverSteps.length > 0 ? serverSteps : allComplete,
+          analysisSteps: steps.map((step) => ({
+            ...step,
+            status: 'completed' as const,
+          })),
           isAnalyzing: false,
         })
 
         // 분석 완료된 레시피를 자동으로 컬렉션에 저장
         try {
-          const saveResponse = await recipeService.save(recipe)
+          const saveResponse = await recipeService.save(recipe.id)
           if (saveResponse.success && saveResponse.data) {
             const { savedRecipes } = get()
             const isAlreadySaved = savedRecipes.some((r) => r.id === recipe.id)
@@ -103,9 +117,10 @@ export const useRecipeStore = create<RecipeState & RecipeActions>(
             }
           }
         } catch {
-          // 자동 저장 실패는 무시 (사용자가 수동으로 저장 가능)
+          // 자동 저장 실패는 무시
         }
       } catch {
+        stepTimers.forEach(clearTimeout)
         set({
           error: '레시피 분석 중 오류가 발생했습니다',
           isAnalyzing: false,
@@ -113,9 +128,9 @@ export const useRecipeStore = create<RecipeState & RecipeActions>(
       }
     },
 
-    saveRecipe: async (recipe) => {
+    saveRecipe: async (recipeId) => {
       try {
-        const response = await recipeService.save(recipe)
+        const response = await recipeService.save(recipeId)
 
         if (response.success && response.data) {
           const { savedRecipes } = get()

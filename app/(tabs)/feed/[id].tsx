@@ -19,6 +19,7 @@ export default function FeedDetailScreen() {
   const { id } = useLocalSearchParams<{ id: string }>()
   const [feedItem, setFeedItem] = useState<FeedItem | null>(null)
   const [isLoading, setIsLoading] = useState(true)
+  const [error, setError] = useState<string | null>(null)
   const saveRecipe = useRecipeStore((state) => state.saveRecipe)
 
   useEffect(() => {
@@ -28,9 +29,11 @@ export default function FeedDetailScreen() {
         const response = await feedService.getFeedDetail(id)
         if (response.success && response.data) {
           setFeedItem(response.data)
+        } else {
+          setError(response.error || '레시피를 불러오지 못했습니다.')
         }
       } catch {
-        // silently fail
+        setError('네트워크 오류가 발생했습니다.')
       } finally {
         setIsLoading(false)
       }
@@ -41,7 +44,7 @@ export default function FeedDetailScreen() {
   const handleSave = useCallback(async () => {
     if (!feedItem) return
     try {
-      await saveRecipe(feedItem.recipe)
+      await saveRecipe(feedItem.recipe.id)
       haptics.success()
       Alert.alert('저장 완료', '레시피가 컬렉션에 저장되었습니다.')
     } catch {
@@ -61,7 +64,7 @@ export default function FeedDetailScreen() {
   if (!feedItem) {
     return (
       <View className="flex-1 items-center justify-center bg-background-secondary">
-        <Body>레시피를 찾을 수 없습니다.</Body>
+        <Body>{error || '레시피를 찾을 수 없습니다.'}</Body>
       </View>
     )
   }

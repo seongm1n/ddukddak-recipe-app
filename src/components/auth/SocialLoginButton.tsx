@@ -4,7 +4,7 @@ import { Ionicons } from '@expo/vector-icons'
 import { haptics } from '@/utils/haptics'
 
 interface SocialLoginButtonProps {
-  readonly provider: 'apple' | 'google'
+  readonly provider: 'apple' | 'google' | 'kakao'
   readonly onPress: () => void
   readonly isLoading?: boolean
 }
@@ -25,6 +25,14 @@ const providerConfig = {
     textStyle: 'text-gray-800',
     iconColor: '#4285F4',
     indicatorColor: '#4285F4',
+  },
+  kakao: {
+    icon: 'chatbubble' as const,
+    label: '카카오로 계속하기',
+    containerStyle: 'bg-[#FEE500]',
+    textStyle: 'text-[#191919]',
+    iconColor: '#191919',
+    indicatorColor: '#191919',
   },
 } as const
 
