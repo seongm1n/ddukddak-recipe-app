@@ -30,7 +30,8 @@
           "kakaolink",
           "kakaotalk"
         ],
-        "KAKAO_APP_KEY": "b50e7fb58751e581782a4377c3c3cd80"
+        "KAKAO_APP_KEY": "b50e7fb58751e581782a4377c3c3cd80",
+        "ITSAppUsesNonExemptEncryption": false
       }
     },
     "android": {
@@ -44,6 +45,16 @@
     "web": {
       "favicon": "./assets/favicon.png",
       "bundler": "metro"
+    },
+    "extra": {
+      "eas": {
+        "projectId": "c91624a1-71dd-42ff-92cb-99ea4cf550ce"
+      },
+      "router": {}
+    },
+    "owner": "hellotheo",
+    "runtimeVersion": {
+      "policy": "appVersion"
     },
     "plugins": [
       "expo-router",
