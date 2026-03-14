@@ -11,6 +11,7 @@ import { IngredientList } from '@/components/result/IngredientList'
 import { CostSummary } from '@/components/result/CostSummary'
 import { Body } from '@/components/ui/Typography'
 import { useRecipeStore } from '@/store/recipeStore'
+import { useStoreReview } from '@/hooks/useStoreReview'
 import { haptics } from '@/utils/haptics'
 
 export default function ResultScreen() {
@@ -19,6 +20,9 @@ export default function ResultScreen() {
   const savedRecipes = useRecipeStore((state) => state.savedRecipes)
   const saveRecipe = useRecipeStore((state) => state.saveRecipe)
   const clearCurrentRecipe = useRecipeStore((state) => state.clearCurrentRecipe)
+
+  // 2회째 분석 완료 시 앱스토어 리뷰 요청
+  useStoreReview(currentRecipe !== null)
 
   // 탭바 숨기기
   useLayoutEffect(() => {

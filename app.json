@@ -2,7 +2,7 @@
   "expo": {
     "name": "뚝딱레시피",
     "slug": "ddukddak-recipe-app",
-    "version": "1.0.0",
+    "version": "1.0.1",
     "orientation": "portrait",
     "icon": "./assets/icon.png",
     "scheme": "ddukddak",
@@ -14,7 +14,7 @@
       "backgroundColor": "#FF6B35"
     },
     "ios": {
-      "supportsTablet": true,
+      "supportsTablet": false,
       "bundleIdentifier": "com.ddukddak.recipe",
       "usesAppleSignIn": true,
       "infoPlist": {

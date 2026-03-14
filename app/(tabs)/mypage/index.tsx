@@ -52,20 +52,19 @@ export default function MyPageScreen() {
 
   const handleFeedback = async () => {
     haptics.light()
-    const url = 'mailto:support@ddukddak.app?subject=뚝딱레시피 피드백'
+    const url = 'mailto:0411tjdals34@gmail.com?subject=뚝딱레시피 피드백'
     const canOpen = await Linking.canOpenURL(url)
     if (canOpen) {
       await Linking.openURL(url)
     } else {
-      Alert.alert('메일 앱 없음', 'support@ddukddak.app으로 피드백을 보내주세요.')
+      Alert.alert('메일 앱 없음', '0411tjdals34@gmail.com으로 피드백을 보내주세요.')
     }
   }
 
   const handleRating = async () => {
     haptics.light()
-    // TODO: 스토어 등록 후 실제 ID로 교체
     const url = Platform.select({
-      ios: 'itms-apps://apps.apple.com/app/id6743129337?action=write-review',
+      ios: 'itms-apps://apps.apple.com/app/id6760252662?action=write-review',
       android: 'market://details?id=com.ddukddak.recipe',
     })
     if (!url) return

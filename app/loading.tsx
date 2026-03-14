@@ -52,7 +52,23 @@ export default function LoadingScreen() {
               <Body className="text-center font-semibold text-white">돌아가기</Body>
             </Pressable>
           ) : (
-            <AnalysisProgress steps={[...analysisSteps]} />
+            <>
+              <AnalysisProgress steps={[...analysisSteps]} />
+              <Pressable
+                onPress={() => router.back()}
+                style={{
+                  marginTop: 32,
+                  paddingHorizontal: 32,
+                  paddingVertical: 14,
+                  borderRadius: 12,
+                  backgroundColor: 'rgba(255,255,255,0.15)',
+                }}
+              >
+                <Body className="text-center font-semibold text-white">
+                  다른 화면 둘러보기
+                </Body>
+              </Pressable>
+            </>
           )}
         </View>
       </SafeAreaView>
